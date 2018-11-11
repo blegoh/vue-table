@@ -29,8 +29,8 @@ const Datatable = {
                         </div>
                     </div>
                     <br/>
-                    <table class="table">
-                        <thead>
+                    <table class="table table-bordered" style="table-layout: fixed;">
+                        <thead class="thead-dark">
                         <tr>
                             <th scope="col" v-on:click="sort(key)" v-for="(value, key) in data[0]">{{key}} <i v-bind:class="icon"
                                                                                                               v-if="sort_by == key"></i>
@@ -71,7 +71,6 @@ const Datatable = {
             `,
             computed: {
                 filtered: function () {
-                    console.log(this.perPage);
                     let f = this.data.filter((p) => {
                         let x = (this.search == '');
                         for (let key in p) {
@@ -108,7 +107,6 @@ const Datatable = {
                             return 0;
                         });
                     }
-                    console.log(this.page+' '+this.perPage);
                     return f.slice((this.page - 1) * this.perPage, this.page * this.perPage);
                 },
                 icon: function () {
@@ -150,7 +148,7 @@ const Datatable = {
         Vue.mixin({
             // Add component lifecycle hooks or properties.
             created() {
-                console.log('Hello from created hook!')
+
             }
         });
 
