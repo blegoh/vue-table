@@ -1,0 +1,13 @@
+{
+  "scripts": {
+    "dev": "npm run development",
+    "development": "cross-env NODE_ENV=development node_modules/webpack/bin/webpack.js --progress --hide-modules --config=webpack.config.js"
+  },
+  "devDependencies": {
+    "vue": "^2.5.17",
+    "webpack": "^3.6.0",
+    "es6-promise": "^4.1.1",
+    "babel-core": "^6.26.0",
+    "babel-loader": "^7.1.2"
+  }
+}
