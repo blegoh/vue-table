@@ -1,5 +1,5 @@
 import Vue from 'vue'
-import Datatable from './plugin'
+import Datatable from './src/plugin'
 
 // Without options
 Vue.use(Datatable);
