@@ -4,14 +4,15 @@
     "development": "cross-env NODE_ENV=development node_modules/webpack/bin/webpack.js --progress --hide-modules --config=webpack.config.js"
   },
   "devDependencies": {
+    "babel-core": "^6.26.0",
+    "babel-loader": "^7.1.2",
+    "cross-env": "^5.1",
+    "css-loader": "^0.28.7",
+    "es6-promise": "^4.1.1",
     "vue": "^2.5.17",
     "vue-loader": "^13.0.4",
     "vue-template-compiler": "^2.4.4",
     "webpack": "^3.6.0",
-    "webpack-merge": "^4.1.1",
-    "es6-promise": "^4.1.1",
-    "babel-core": "^6.26.0",
-    "babel-loader": "^7.1.2",
-    "cross-env": "^5.1"
+    "webpack-merge": "^4.1.1"
   }
 }

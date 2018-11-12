@@ -6,7 +6,7 @@
                        aria-label="Search">
             </div>
             <div class="col-sm">
-                <select v-model="perPage" class="custom-select" id="inputGroupSelect01">
+                <select v-model="perPage" v-on:change="page=1" class="custom-select" id="inputGroupSelect01">
                     <option>10</option>
                     <option>15</option>
                     <option>20</option>
@@ -31,26 +31,32 @@
             </div>
         </div>
         <br/>
-        <table class="table table-bordered" style="">
-            <thead class="thead-dark">
-            <tr>
-                <th scope="col" v-on:click="sort(key)" v-for="(value, key) in data[0]"
-                    v-if="checkedColumn.indexOf(key) != -1">{{key}} <i v-bind:class="icon"
-                                                                       v-if="sort_by == key"></i>
-                </th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr v-for="datum in filtered">
-                <td v-for="(value, key) in datum" v-if="checkedColumn.indexOf(key) != -1">{{value}}</td>
-            </tr>
-            </tbody>
-        </table>
+        <div class="tbl-header">
+            <table class="table table-bordered fixed_headers" style="">
+                <thead class="thead-dark">
+                <tr>
+                    <th scope="col" v-on:click="sort(key)" v-for="(value, key) in data[0]"
+                        v-if="checkedColumn.indexOf(key) != -1">{{key}} <i v-bind:class="icon"
+                                                                           v-if="sort_by == key"></i>
+                    </th>
+                </tr>
+                </thead>
+            </table>
+        </div>
+        <div class="tbl-content">
+            <table class="table table-bordered">
+                <tbody>
+                <tr v-for="datum in filtered">
+                    <td v-for="(value, key) in datum" v-if="checkedColumn.indexOf(key) != -1">{{value}}</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
         <nav aria-label="Page navigation example">
             <ul class="pagination">
                 <li v-bind:class="classPrevNext('prev')">
                     <a class="page-link" v-on:click="page -= 1" href="#" aria-label="Previous">
-                        <span aria-hidden="true">&laquo;</span>
+                        <span aria-hidden="true">&lt;</span>
                         <span class="sr-only">Previous</span>
                     </a>
                 </li>
@@ -64,7 +70,7 @@
 
                 <li v-bind:class="classPrevNext('next')">
                     <a class="page-link" v-on:click="page += 1" href="#" aria-label="Next">
-                        <span aria-hidden="true">&raquo;</span>
+                        <span aria-hidden="true">&gt;</span>
                         <span class="sr-only">Next</span>
                     </a>
                 </li>
@@ -165,3 +171,38 @@
         }
     }
 </script>
+
+<style>
+    table {
+        width: 100%;
+        table-layout: fixed;
+    }
+
+    .tbl-header {
+        background-color: rgba(255, 255, 255, 0.3);
+    }
+
+    .tbl-content {
+        height: 500px;
+        overflow-x: auto;
+        margin-top: 0px;
+        border: 1px solid rgba(255, 255, 255, 0.3);
+    }
+
+    th {
+        padding: 20px 15px;
+        text-align: left;
+        font-weight: 500;
+        font-size: 12px;
+        text-transform: uppercase;
+    }
+
+    td {
+        padding: 15px;
+        text-align: left;
+        vertical-align: middle;
+        font-weight: 300;
+        font-size: 12px;
+        border-bottom: solid 1px rgba(255, 255, 255, 0.1);
+    }
+</style>
