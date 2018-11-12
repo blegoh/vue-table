@@ -9,8 +9,9 @@ const Datatable = {
                     search: '',
                     sort_by: '',
                     sort_method: 'asc',
-                    perPage: 15,
-                    page: 1
+                    perPage: 10,
+                    page: 1,
+                    checkedColumn: Object.keys(this.data[0])
                 }
             },
             template: `
@@ -27,19 +28,34 @@ const Datatable = {
                                 <option>25</option>
                             </select>
                         </div>
+                        <div class="col-sm">
+                            <div class="dropdown">
+                              <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                Show/hide column
+                              </button>
+                              <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                <div class="form-check" v-for="(value, key) in data[0]">
+                                  <input class="form-check-input" type="checkbox" :value="key" v-model="checkedColumn">
+                                  <label class="form-check-label" for="defaultCheck1">
+                                    {{key}}
+                                  </label>
+                                </div>
+                              </div>
+                            </div>
+                        </div>
                     </div>
                     <br/>
                     <table class="table table-bordered" style="table-layout: fixed;">
                         <thead class="thead-dark">
                         <tr>
-                            <th scope="col" v-on:click="sort(key)" v-for="(value, key) in data[0]">{{key}} <i v-bind:class="icon"
+                            <th scope="col" v-on:click="sort(key)" v-for="(value, key) in data[0]" v-if="checkedColumn.indexOf(key) != -1">{{key}} <i v-bind:class="icon"
                                                                                                               v-if="sort_by == key"></i>
                             </th>
                         </tr>
                         </thead>
                         <tbody>
                         <tr v-for="datum in filtered">
-                            <td v-for="value in datum">{{value}}</td>
+                            <td v-for="(value, key) in datum" v-if="checkedColumn.indexOf(key) != -1">{{value}}</td>
                         </tr>
                         </tbody>
                     </table>
@@ -70,7 +86,7 @@ const Datatable = {
                 </div>
             `,
             computed: {
-                filtered: function () {
+                filterSearch: function(){
                     let f = this.data.filter((p) => {
                         let x = (this.search == '');
                         for (let key in p) {
@@ -81,6 +97,10 @@ const Datatable = {
                         }
                         return x;
                     });
+                    return f;
+                },
+                filtered: function () {
+                    let f = this.filterSearch;
                     if (this.sort_by != '') {
                         let k = this.sort_by;
                         let m = this.sort_method;
@@ -117,7 +137,7 @@ const Datatable = {
                     }
                 },
                 pageCount: function () {
-                    let count = Math.ceil(this.data.length / this.perPage);
+                    let count = Math.ceil(this.filterSearch.length / this.perPage);
                     return count;
                 }
             },
