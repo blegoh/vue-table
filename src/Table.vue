@@ -1,79 +1,65 @@
 <template>
     <div>
-        <div class="row">
-            <div class="col-sm">
-                <input v-model="search" v-on:keypress="page = 1" class="form-control" type="search" placeholder="Search"
+        <div class="columns">
+            <div class="column">
+                <input v-model="search" v-on:keypress="page = 1" class="input" type="search" placeholder="Search"
                        aria-label="Search">
             </div>
-            <div class="col-sm">
-                <select v-model="perPage" v-on:change="page=1" class="custom-select" id="inputGroupSelect01">
-                    <option>10</option>
-                    <option>15</option>
-                    <option>20</option>
-                    <option>25</option>
-                </select>
+            <div class="column">
+                <div class="select">
+                    <select v-model="perPage" v-on:change="page=1">
+                        <option>10</option>
+                        <option>15</option>
+                        <option>20</option>
+                        <option>25</option>
+                    </select>
+                </div>
             </div>
-            <div class="col-sm">
-                <div class="dropdown">
-                    <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton"
-                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        Show/hide column
-                    </button>
-                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                        <div class="form-check" v-for="(value, key) in data[0]">
-                            <input class="form-check-input" type="checkbox" :value="key" v-model="checkedColumn">
-                            <label class="form-check-label">
-                                {{key}}
-                            </label>
+            <div class="column">
+                <div v-on:click="dropdown" v-bind:class="{'dropdown': true, 'is-active': isActive }">
+                    <div class="dropdown-trigger">
+                        <button class="button" aria-haspopup="true" aria-controls="dropdown-menu2">
+                            <span>Show/hide column</span>
+                            <span class="icon is-small">
+                                <i class="fas fa-angle-down" aria-hidden="true"></i>
+                            </span>
+                        </button>
+                    </div>
+                    <div class="dropdown-menu" id="dropdown-menu2" role="menu">
+                        <div class="dropdown-content">
+                            <div class="dropdown-item" v-for="(value, key) in data[0]">
+                                <label class="checkbox">
+                                    <input type="checkbox" :value="key" v-model="checkedColumn">
+                                    {{key}}
+                                </label>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-        <br/>
-        <div class="tbl-header">
-            <table class="table table-bordered fixed_headers" style="">
-                <thead class="thead-dark">
-                <tr>
-                    <th scope="col" v-on:click="sort(key)" v-for="(value, key) in data[0]"
-                        v-if="checkedColumn.indexOf(key) != -1">{{key}} <i v-bind:class="icon"
-                                                                           v-if="sort_by == key"></i>
-                    </th>
-                </tr>
-                </thead>
-            </table>
-        </div>
-        <div class="tbl-content">
-            <table class="table table-bordered">
-                <tbody>
-                <tr v-for="datum in filtered">
-                    <td v-for="(value, key) in datum" v-if="checkedColumn.indexOf(key) != -1">{{value}}</td>
-                </tr>
-                </tbody>
-            </table>
-        </div>
-        <nav aria-label="Page navigation example">
-            <ul class="pagination">
-                <li v-bind:class="classPrevNext('prev')">
-                    <a class="page-link" v-on:click="page -= 1" href="#" aria-label="Previous">
-                        <span aria-hidden="true">&lt;</span>
-                        <span class="sr-only">Previous</span>
-                    </a>
-                </li>
+        <table class="table is-bordered">
+            <thead>
+            <tr>
+                <th scope="col" v-on:click="sort(key)" v-for="(value, key) in data[0]"
+                    v-if="checkedColumn.indexOf(key) != -1">{{key}} <i v-bind:class="icon"
+                                                                       v-if="sort_by == key"></i>
+                </th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr v-for="datum in filtered">
+                <td v-for="(value, key) in datum" v-if="checkedColumn.indexOf(key) != -1">{{value}}</td>
+            </tr>
+            </tbody>
+        </table>
 
-                <li v-bind:class="classListPage(n)" v-for="n in pageCount">
-                    <a class="page-link" href="#" v-on:click="page = n">
-                        {{n}}
-                        <span class="sr-only" v-if="n == page">(current)</span>
-                    </a>
-                </li>
+        <nav class="pagination is-centered" role="navigation" aria-label="pagination">
+            <a class="pagination-previous" v-on:click="page -= 1">Previous</a>
+            <a class="pagination-next" v-on:click="page += 1">Next page</a>
+            <ul class="pagination-list">
+                <li v-for="n in pageCount"><a v-on:click="page = n" v-bind:class="classListPage(n)">{{n}}</a></li>
 
-                <li v-bind:class="classPrevNext('next')">
-                    <a class="page-link" v-on:click="page += 1" href="#" aria-label="Next">
-                        <span aria-hidden="true">&gt;</span>
-                        <span class="sr-only">Next</span>
-                    </a>
-                </li>
             </ul>
         </nav>
     </div>
@@ -89,7 +75,8 @@
                 sort_method: 'asc',
                 perPage: 10,
                 page: 1,
-                checkedColumn: Object.keys(this.data[0])
+                checkedColumn: Object.keys(this.data[0]),
+                isActive: false
             }
         },
         computed: {
@@ -148,15 +135,18 @@
             }
         },
         methods: {
+            dropdown: function () {
+                this.isActive = !this.isActive;
+            },
             sort: function (s) {
                 this.sort_by = s;
                 this.sort_method = (this.sort_method == 'asc') ? 'desc' : 'asc';
             },
             classListPage: function (p) {
                 if (p == this.page) {
-                    return 'page-item active'
+                    return 'pagination-link is-current'
                 } else {
-                    return 'page-item'
+                    return 'pagination-link'
                 }
             },
             classPrevNext: function (p) {
@@ -168,41 +158,40 @@
                 }
                 return 'page-item'
             }
+        },
+        created() {
+
         }
     }
 </script>
 
 <style>
-    table {
+
+    .table{
+        width: 100%;
+        overflow-x: auto;
+    }
+    thead {
+        display: block;
+        position: sticky;
+        top: 0;
+        background-color: grey;
+    }
+
+    thead th { min-width: 500px}
+
+    tbody, thead tr {
+        display: table;
         width: 100%;
         table-layout: fixed;
     }
 
-    .tbl-header {
-        background-color: rgba(255, 255, 255, 0.3);
-    }
-
-    .tbl-content {
-        height: 500px;
-        overflow-x: auto;
-        margin-top: 0px;
-        border: 1px solid rgba(255, 255, 255, 0.3);
-    }
-
-    th {
-        padding: 20px 15px;
-        text-align: left;
-        font-weight: 500;
-        font-size: 12px;
-        text-transform: uppercase;
-    }
-
     td {
-        padding: 15px;
-        text-align: left;
-        vertical-align: middle;
-        font-weight: 300;
-        font-size: 12px;
-        border-bottom: solid 1px rgba(255, 255, 255, 0.1);
+        border: 1px solid;
+    }
+
+    * {
+        box-sizing: border-box;
+        border-collapse: collapse;
     }
 </style>
