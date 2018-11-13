@@ -188,6 +188,7 @@
 
     td {
         border: 1px solid;
+        word-break: break-all;
     }
 
     * {
