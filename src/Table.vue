@@ -18,14 +18,14 @@
             <div class="column">
                 <div v-on:click="dropdown" v-bind:class="{'dropdown': true, 'is-active': isActive }">
                     <div class="dropdown-trigger">
-                        <button class="button" aria-haspopup="true" aria-controls="dropdown-menu2">
+                        <button class="button" aria-haspopup="true" >
                             <span>Show/hide column</span>
                             <span class="icon is-small">
                                 <i class="fas fa-angle-down" aria-hidden="true"></i>
                             </span>
                         </button>
                     </div>
-                    <div class="dropdown-menu" id="dropdown-menu2" role="menu">
+                    <div class="dropdown-menu" role="menu">
                         <div class="dropdown-content">
                             <div class="dropdown-item" v-for="(value, key) in data[0]">
                                 <label class="checkbox">
@@ -38,10 +38,11 @@
                 </div>
             </div>
         </div>
-        <table class="table is-bordered">
+        <div class="responsive">
+        <table class="table is-bordered is-fullwidth" :id="uuid+'main-table'">
             <thead>
             <tr>
-                <th scope="col" v-on:click="sort(key)" v-for="(value, key) in data[0]"
+                <th v-bind:id="getThId('a',key)" v-on:click="sort(key)" v-for="(value, key) in data[0]"
                     v-if="checkedColumn.indexOf(key) != -1">{{key}} <i v-bind:class="icon"
                                                                        v-if="sort_by == key"></i>
                 </th>
@@ -53,7 +54,17 @@
             </tr>
             </tbody>
         </table>
-
+        <table class="table is-bordered is-fullwidth header-fixed" :id="uuid+'header-fixed'" v-show="isShow">
+            <thead>
+            <tr>
+                <th v-bind:id="getThId('b',key)" v-on:click="sort(key)" v-for="(value, key) in data[0]"
+                    v-if="checkedColumn.indexOf(key) != -1">{{key}} <i v-bind:class="icon"
+                                                                       v-if="sort_by == key"></i>
+                </th>
+            </tr>
+            </thead>
+        </table>
+        </div>
         <nav class="pagination is-centered" role="navigation" aria-label="pagination">
             <a class="pagination-previous" v-on:click="page -= 1">Previous</a>
             <a class="pagination-next" v-on:click="page += 1">Next page</a>
@@ -76,7 +87,9 @@
                 perPage: 10,
                 page: 1,
                 checkedColumn: Object.keys(this.data[0]),
-                isActive: false
+                isActive: false,
+                isShow: false,
+                uuid: this.guid()
             }
         },
         computed: {
@@ -135,6 +148,24 @@
             }
         },
         methods: {
+            s4: function(){
+                return Math.floor((1 + Math.random()) * 0x10000)
+                    .toString(16)
+                    .substring(1);
+            },
+            guid: function(){
+                return this.s4() + this.s4() + '-' + this.s4() + '-' + this.s4() + '-' +
+                    this.s4() + '-' + this.s4() + this.s4() + this.s4();
+            },
+            getWidth: function(key){
+                console.log('col-'+key);
+                let a = document.getElementById(this.uuid+'col-'+key);
+                console.log(a);
+                return 'width: '+a.offsetWidth+'px';
+            },
+            getThId: function(a,key){
+                return (a == 'a')?this.uuid+'col-'+key:this.uuid+'cl-'+key;
+            },
             dropdown: function () {
                 this.isActive = !this.isActive;
             },
@@ -157,42 +188,41 @@
                     return 'page-item disabled'
                 }
                 return 'page-item'
+            },
+            tableHeader: function () {
+                let mainTable = document.getElementById(this.uuid+'main-table');
+                let secondTable = document.getElementById(this.uuid+'header-fixed');
+                secondTable.style.width=mainTable.offsetWidth+'px';
+                if(mainTable.getBoundingClientRect().y <= 0 && mainTable.getBoundingClientRect().y >= (-1*mainTable.offsetHeight) ){
+                    this.isShow = true;
+                }else {
+                    this.isShow = false;
+                }
+                for (let key in this.data[0]) {
+                    if (this.checkedColumn.indexOf(key) != -1) {
+                        let a = document.getElementById(this.uuid+'cl-' + key);
+                        let b = document.getElementById(this.uuid+'col-' + key);
+                        a.width = b.offsetWidth;
+                    }
+                }
+
             }
         },
         created() {
-
+            window.addEventListener('scroll', this.tableHeader);
         }
     }
 </script>
 
 <style>
-
-    .table{
-        width: 100%;
-        overflow-x: auto;
-    }
-    thead {
-        display: block;
-        position: sticky;
-        top: 0;
-        background-color: grey;
-    }
-
-    thead th { min-width: 500px}
-
-    tbody, thead tr {
-        display: table;
-        width: 100%;
-        table-layout: fixed;
-    }
-
-    td {
-        border: 1px solid;
-        word-break: break-all;
-    }
-
-    * {
-        box-sizing: border-box;
-        border-collapse: collapse;
+    /*.responsive{*/
+        /*display: block;*/
+        /*overflow-x: auto;*/
+        /*white-space: nowrap;*/
+    /*}*/
+    .header-fixed {
+        position: fixed;
+        top: 0px;
+        background-color:white;
     }
 </style>
