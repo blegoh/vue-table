@@ -38,33 +38,47 @@
                 </div>
             </div>
         </div>
-        <div class="responsive">
+        <div style="overflow-x:auto;">
         <table class="table is-bordered is-fullwidth" :id="uuid+'main-table'">
             <thead>
             <tr>
                 <th v-bind:id="getThId('a',key)" v-on:click="sort(key)" v-for="(value, key) in data[0]"
-                    v-if="checkedColumn.indexOf(key) != -1">{{key}} <i v-bind:class="icon"
-                                                                       v-if="sort_by == key"></i>
+                    v-if="checkedColumn.indexOf(key) != -1" :class="{'first' : checkedColumn.indexOf(key) == 0}">{{key}} <i v-bind:class="icon"
+                                                                       v-if="sortBy == key"></i>
                 </th>
             </tr>
             </thead>
             <tbody>
-            <tr v-for="datum in filtered">
-                <td v-for="(value, key) in datum" v-if="checkedColumn.indexOf(key) != -1">{{value}}</td>
+            <tr v-for="(datum,index) in filtered">
+                <td :id="getTdId('a',index, key)" v-for="(value, key) in datum" v-if="checkedColumn.indexOf(key) != -1">{{value}}</td>
             </tr>
             </tbody>
         </table>
-        <table class="table is-bordered is-fullwidth header-fixed" :id="uuid+'header-fixed'" v-show="isShow">
+        </div>
+        <table class="table is-bordered col-fixed" :id="uuid+'table-col'">
+            <thead>
+            <tr>
+                <th v-on:click="sort(checkedColumn[0])">{{checkedColumn[0]}} <i v-bind:class="icon" v-if="sortBy == checkedColumn[0]"></i>
+                </th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr v-for="(datum, index) in filtered">
+                <td :id="getTdId('b',index, checkedColumn[0])">{{datum[checkedColumn[0]]}}</td>
+            </tr>
+            </tbody>
+        </table>
+        <table class="table is-bordered is-fullwidth header-fixed" :id="uuid+'header-fixed'" v-show="isShow" v-on:scroll="colFixed">
             <thead>
             <tr>
                 <th v-bind:id="getThId('b',key)" v-on:click="sort(key)" v-for="(value, key) in data[0]"
                     v-if="checkedColumn.indexOf(key) != -1">{{key}} <i v-bind:class="icon"
-                                                                       v-if="sort_by == key"></i>
+                                                                       v-if="sortBy == key"></i>
                 </th>
             </tr>
             </thead>
         </table>
-        </div>
+
         <nav class="pagination is-centered" role="navigation" aria-label="pagination">
             <a class="pagination-previous" v-on:click="page -= 1">Previous</a>
             <a class="pagination-next" v-on:click="page += 1">Next page</a>
@@ -82,8 +96,8 @@
         data: function () {
             return {
                 search: '',
-                sort_by: '',
-                sort_method: 'asc',
+                sortBy: '',
+                sortMethod: 'asc',
                 perPage: 10,
                 page: 1,
                 checkedColumn: Object.keys(this.data[0]),
@@ -108,9 +122,9 @@
             },
             filtered: function () {
                 let f = this.filterSearch;
-                if (this.sort_by != '') {
-                    let k = this.sort_by;
-                    let m = this.sort_method;
+                if (this.sortBy != '') {
+                    let k = this.sortBy;
+                    let m = this.sortMethod;
                     f.sort(function (a, b) {
                         if (m == 'asc') {
                             if (a[k] < b[k]) {
@@ -136,7 +150,7 @@
                 return f.slice((this.page - 1) * this.perPage, this.page * this.perPage);
             },
             icon: function () {
-                if (this.sort_method == 'asc') {
+                if (this.sortMethod == 'asc') {
                     return "fas fa-sort-up";
                 } else {
                     return "fas fa-sort-down";
@@ -166,12 +180,17 @@
             getThId: function(a,key){
                 return (a == 'a')?this.uuid+'col-'+key:this.uuid+'cl-'+key;
             },
+            getTdId: function(a,index, key){
+                if (key != this.checkedColumn[0])
+                    return '';
+                return (a == 'a')?this.uuid+'left-'+index:this.uuid+'lft-'+index;
+            },
             dropdown: function () {
                 this.isActive = !this.isActive;
             },
             sort: function (s) {
-                this.sort_by = s;
-                this.sort_method = (this.sort_method == 'asc') ? 'desc' : 'asc';
+                this.sortBy = s;
+                this.sortMethod = (this.sortMethod == 'asc') ? 'desc' : 'asc';
             },
             classListPage: function (p) {
                 if (p == this.page) {
@@ -205,24 +224,48 @@
                         a.width = b.offsetWidth;
                     }
                 }
-
+            },
+            colHeight: function(){
+                for (let i=0;i<  this.filtered.length;i++) {
+                    let a = document.getElementById(this.uuid+'left-' + i);
+                    let b = document.getElementById(this.uuid+'lft-' + i);
+                    console.log(a.height);
+                    b.height = a.offsetHeight;
+                }
+            },
+            colFixed: function () {
+                let mainTable = document.getElementById(this.uuid+'main-table');
+                let secondTable = document.getElementById(this.uuid+'table-col');
+                secondTable.style.top = mainTable.getBoundingClientRect().y+'px';
             }
+        },
+        mounted(){
+            this.colHeight();
+            this.colFixed();
         },
         created() {
             window.addEventListener('scroll', this.tableHeader);
+            window.addEventListener('scroll', this.colFixed);
         }
     }
 </script>
 
 <style>
-    /*.responsive{*/
-        /*display: block;*/
-        /*overflow-x: auto;*/
-        /*white-space: nowrap;*/
-    /*}*/
     .header-fixed {
         position: fixed;
+        display: block;
+        overflow-x: auto;
         top: 0px;
         background-color:white;
     }
+
+    .col-fixed{
+        position: fixed;
+        display: block;
+        overflow-x: auto;
+        top: 5px;
+        background-color:white;
+    }
+
+
 </style>
