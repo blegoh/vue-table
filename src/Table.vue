@@ -234,11 +234,9 @@
                     if (this.checkedColumn.indexOf(key) != -1) {
                         let a = document.getElementById(this.uuid + 'cl-' + key);
                         if (a.getBoundingClientRect().x < thirdTable.getBoundingClientRect().x || a.getBoundingClientRect().x > (thirdTable.getBoundingClientRect().x + dv.getBoundingClientRect().width)) {
-                            a.style.visibility = 'hidden';
-                            // a.style.border = 'none';
+                            a.classList.add('hide');
                         } else {
-                            a.style.visibility = 'visible';
-                            // a.style.border = '1px solid #dadada';
+                            a.classList.remove('hide');
                         }
                     }
                 }
@@ -327,6 +325,11 @@
         overflow-x: auto;
         top: 5px;
         background-color: white;
+    }
+
+    .hide{
+        visibility: hidden;
+        border: none!important;
     }
 
 
