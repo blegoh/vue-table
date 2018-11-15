@@ -2,7 +2,8 @@
     <div>
         <div class="columns">
             <div class="column">
-                <input v-model="search" v-on:keypress="page = 1" class="input" type="search" placeholder="Search"
+                <input v-model="search" v-on:keypress="page = 1" class="input" type="search"
+                       placeholder="Search"
                        aria-label="Search">
             </div>
             <div class="column">
@@ -29,7 +30,8 @@
                         <div class="dropdown-content">
                             <div class="dropdown-item" v-for="(value, key) in data[0]">
                                 <label class="checkbox">
-                                    <input type="checkbox" :value="key" v-model="checkedColumn">
+                                    <input type="checkbox" :value="key"
+                                           v-model="checkedColumn">
                                     {{key}}
                                 </label>
                             </div>
@@ -231,9 +233,9 @@
                 for (let key in this.data[0]) {
                     if (this.checkedColumn.indexOf(key) != -1) {
                         let a = document.getElementById(this.uuid + 'cl-' + key);
-                        if (a.getBoundingClientRect().x < thirdTable.getBoundingClientRect().x || a.getBoundingClientRect().x > (thirdTable.getBoundingClientRect().x + dv.getBoundingClientRect().width)){
+                        if (a.getBoundingClientRect().x < thirdTable.getBoundingClientRect().x || a.getBoundingClientRect().x > (thirdTable.getBoundingClientRect().x + dv.getBoundingClientRect().width)) {
                             a.style.visibility = 'hidden';
-                        }else{
+                        } else {
                             a.style.visibility = 'visible';
                         }
                     }
@@ -248,8 +250,8 @@
                 } else {
                     this.isShow = false;
                 }
-                let x = document.getElementById(this.uuid+'kiri-atas-col');
-                let y = document.getElementById(this.uuid+ 'col-' + this.checkedColumn[0]);
+                let x = document.getElementById(this.uuid + 'kiri-atas-col');
+                let y = document.getElementById(this.uuid + 'col-' + this.checkedColumn[0]);
                 x.width = y.offsetWidth;
                 for (let key in this.data[0]) {
                     if (this.checkedColumn.indexOf(key) != -1) {
@@ -280,6 +282,9 @@
             window.addEventListener('scroll', this.tableHeader);
             window.addEventListener('scroll', this.colFixed);
             window.addEventListener('scroll', this.horizontalScroll);
+        },
+        updated(){
+            this.colHeight();
         }
     }
 </script>
@@ -293,13 +298,14 @@
         border: none;
     }
 
-    .header-fixed thead{
+    .header-fixed thead {
         border: none;
     }
 
-    .header-fixed tr{
+    .header-fixed tr {
         border: none;
     }
+
     .col-fixed {
         position: fixed;
         display: block;
