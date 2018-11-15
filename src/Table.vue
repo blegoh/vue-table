@@ -18,7 +18,7 @@
             <div class="column">
                 <div v-on:click="dropdown" v-bind:class="{'dropdown': true, 'is-active': isActive }">
                     <div class="dropdown-trigger">
-                        <button class="button" aria-haspopup="true" >
+                        <button class="button" aria-haspopup="true">
                             <span>Show/hide column</span>
                             <span class="icon is-small">
                                 <i class="fas fa-angle-down" aria-hidden="true"></i>
@@ -38,27 +38,32 @@
                 </div>
             </div>
         </div>
-        <div style="overflow-x:auto;">
-        <table class="table is-bordered is-fullwidth" :id="uuid+'main-table'">
-            <thead>
-            <tr>
-                <th v-bind:id="getThId('a',key)" v-on:click="sort(key)" v-for="(value, key) in data[0]"
-                    v-if="checkedColumn.indexOf(key) != -1" :class="{'first' : checkedColumn.indexOf(key) == 0}">{{key}} <i v-bind:class="icon"
-                                                                       v-if="sortBy == key"></i>
-                </th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr v-for="(datum,index) in filtered">
-                <td :id="getTdId('a',index, key)" v-for="(value, key) in datum" v-if="checkedColumn.indexOf(key) != -1">{{value}}</td>
-            </tr>
-            </tbody>
-        </table>
+        <div :id="uuid+'hor-scroll'" style="overflow-x:auto;" v-on:scroll="horizontalScroll">
+            <table class="table is-bordered is-fullwidth" :id="uuid+'main-table'">
+                <thead>
+                <tr>
+                    <th v-bind:id="getThId('a',key)" v-on:click="sort(key)" v-for="(value, key) in data[0]"
+                        v-if="checkedColumn.indexOf(key) != -1" :class="{'first' : checkedColumn.indexOf(key) == 0}">
+                        {{key}} <i v-bind:class="icon"
+                                   v-if="sortBy == key"></i>
+                    </th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr v-for="(datum,index) in filtered">
+                    <td :id="getTdId('a',index, key)" v-for="(value, key) in datum"
+                        v-if="checkedColumn.indexOf(key) != -1">{{value}}
+                    </td>
+                </tr>
+                </tbody>
+            </table>
         </div>
+
         <table class="table is-bordered col-fixed" :id="uuid+'table-col'">
             <thead>
             <tr>
-                <th v-on:click="sort(checkedColumn[0])">{{checkedColumn[0]}} <i v-bind:class="icon" v-if="sortBy == checkedColumn[0]"></i>
+                <th v-on:click="sort(checkedColumn[0])">{{checkedColumn[0]}} <i v-bind:class="icon"
+                                                                                v-if="sortBy == checkedColumn[0]"></i>
                 </th>
             </tr>
             </thead>
@@ -68,12 +73,22 @@
             </tr>
             </tbody>
         </table>
-        <table class="table is-bordered is-fullwidth header-fixed" :id="uuid+'header-fixed'" v-show="isShow" v-on:scroll="colFixed">
+        <table class="table is-fullwidth header-fixed" :id="uuid+'header-fixed'" v-show="isShow">
             <thead>
             <tr>
                 <th v-bind:id="getThId('b',key)" v-on:click="sort(key)" v-for="(value, key) in data[0]"
                     v-if="checkedColumn.indexOf(key) != -1">{{key}} <i v-bind:class="icon"
                                                                        v-if="sortBy == key"></i>
+                </th>
+            </tr>
+            </thead>
+        </table>
+
+        <table class="table is-bordered header-fixed" :id="uuid+'kiri-atas'" v-show="isShow">
+            <thead>
+            <tr>
+                <th :id="uuid+'kiri-atas-col'" v-on:click="sort(checkedColumn[0])">{{checkedColumn[0]}}
+                    <i v-bind:class="icon" v-if="sortBy == checkedColumn[0]"></i>
                 </th>
             </tr>
             </thead>
@@ -162,28 +177,26 @@
             }
         },
         methods: {
-            s4: function(){
+            s4: function () {
                 return Math.floor((1 + Math.random()) * 0x10000)
                     .toString(16)
                     .substring(1);
             },
-            guid: function(){
+            guid: function () {
                 return this.s4() + this.s4() + '-' + this.s4() + '-' + this.s4() + '-' +
                     this.s4() + '-' + this.s4() + this.s4() + this.s4();
             },
-            getWidth: function(key){
-                console.log('col-'+key);
-                let a = document.getElementById(this.uuid+'col-'+key);
-                console.log(a);
-                return 'width: '+a.offsetWidth+'px';
+            getWidth: function (key) {
+                let a = document.getElementById(this.uuid + 'col-' + key);
+                return 'width: ' + a.offsetWidth + 'px';
             },
-            getThId: function(a,key){
-                return (a == 'a')?this.uuid+'col-'+key:this.uuid+'cl-'+key;
+            getThId: function (a, key) {
+                return (a == 'a') ? this.uuid + 'col-' + key : this.uuid + 'cl-' + key;
             },
-            getTdId: function(a,index, key){
+            getTdId: function (a, index, key) {
                 if (key != this.checkedColumn[0])
                     return '';
-                return (a == 'a')?this.uuid+'left-'+index:this.uuid+'lft-'+index;
+                return (a == 'a') ? this.uuid + 'left-' + index : this.uuid + 'lft-' + index;
             },
             dropdown: function () {
                 this.isActive = !this.isActive;
@@ -208,44 +221,65 @@
                 }
                 return 'page-item'
             },
-            tableHeader: function () {
-                let mainTable = document.getElementById(this.uuid+'main-table');
-                let secondTable = document.getElementById(this.uuid+'header-fixed');
-                secondTable.style.width=mainTable.offsetWidth+'px';
-                if(mainTable.getBoundingClientRect().y <= 0 && mainTable.getBoundingClientRect().y >= (-1*mainTable.offsetHeight) ){
-                    this.isShow = true;
-                }else {
-                    this.isShow = false;
-                }
+            horizontalScroll: function () {
+                let elmnt = document.getElementById(this.uuid + 'hor-scroll');
+                let mainTable = document.getElementById(this.uuid + 'main-table');
+                let secondTable = document.getElementById(this.uuid + 'header-fixed');
+                let thirdTable = document.getElementById(this.uuid + 'table-col');
+                let dv = document.getElementById(this.uuid + 'hor-scroll');
+                secondTable.style.left = mainTable.getBoundingClientRect().x + 'px';
                 for (let key in this.data[0]) {
                     if (this.checkedColumn.indexOf(key) != -1) {
-                        let a = document.getElementById(this.uuid+'cl-' + key);
-                        let b = document.getElementById(this.uuid+'col-' + key);
+                        let a = document.getElementById(this.uuid + 'cl-' + key);
+                        if (a.getBoundingClientRect().x < thirdTable.getBoundingClientRect().x || a.getBoundingClientRect().x > (thirdTable.getBoundingClientRect().x + dv.getBoundingClientRect().width)){
+                            a.style.visibility = 'hidden';
+                        }else{
+                            a.style.visibility = 'visible';
+                        }
+                    }
+                }
+            },
+            tableHeader: function () {
+                let mainTable = document.getElementById(this.uuid + 'main-table');
+                let secondTable = document.getElementById(this.uuid + 'header-fixed');
+                secondTable.style.width = mainTable.offsetWidth + 'px';
+                if (mainTable.getBoundingClientRect().y <= 0 && mainTable.getBoundingClientRect().y >= (-1 * mainTable.offsetHeight)) {
+                    this.isShow = true;
+                } else {
+                    this.isShow = false;
+                }
+                let x = document.getElementById(this.uuid+'kiri-atas-col');
+                let y = document.getElementById(this.uuid+ 'col-' + this.checkedColumn[0]);
+                x.width = y.offsetWidth;
+                for (let key in this.data[0]) {
+                    if (this.checkedColumn.indexOf(key) != -1) {
+                        let a = document.getElementById(this.uuid + 'cl-' + key);
+                        let b = document.getElementById(this.uuid + 'col-' + key);
                         a.width = b.offsetWidth;
                     }
                 }
             },
-            colHeight: function(){
-                for (let i=0;i<  this.filtered.length;i++) {
-                    let a = document.getElementById(this.uuid+'left-' + i);
-                    let b = document.getElementById(this.uuid+'lft-' + i);
-                    console.log(a.height);
+            colHeight: function () {
+                for (let i = 0; i < this.filtered.length; i++) {
+                    let a = document.getElementById(this.uuid + 'left-' + i);
+                    let b = document.getElementById(this.uuid + 'lft-' + i);
                     b.height = a.offsetHeight;
                 }
             },
             colFixed: function () {
-                let mainTable = document.getElementById(this.uuid+'main-table');
-                let secondTable = document.getElementById(this.uuid+'table-col');
-                secondTable.style.top = mainTable.getBoundingClientRect().y+'px';
+                let mainTable = document.getElementById(this.uuid + 'main-table');
+                let secondTable = document.getElementById(this.uuid + 'table-col');
+                secondTable.style.top = mainTable.getBoundingClientRect().y + 'px';
             }
         },
-        mounted(){
+        mounted() {
             this.colHeight();
             this.colFixed();
         },
         created() {
             window.addEventListener('scroll', this.tableHeader);
             window.addEventListener('scroll', this.colFixed);
+            window.addEventListener('scroll', this.horizontalScroll);
         }
     }
 </script>
@@ -254,17 +288,24 @@
     .header-fixed {
         position: fixed;
         display: block;
-        overflow-x: auto;
         top: 0px;
-        background-color:white;
+        background-color: white;
+        border: none;
     }
 
-    .col-fixed{
+    .header-fixed thead{
+        border: none;
+    }
+
+    .header-fixed tr{
+        border: none;
+    }
+    .col-fixed {
         position: fixed;
         display: block;
         overflow-x: auto;
         top: 5px;
-        background-color:white;
+        background-color: white;
     }
 
 
