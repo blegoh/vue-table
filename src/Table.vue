@@ -2,13 +2,13 @@
     <div>
         <div class="columns">
             <div class="column">
-                <input v-model="search" v-on:keypress="page = 1" class="input" type="search"
+                <input v-model="search" @keypress="page = 1" class="input" type="search"
                        placeholder="Search"
                        aria-label="Search">
             </div>
             <div class="column">
                 <div class="select">
-                    <select v-model="perPage" v-on:change="page=1">
+                    <select v-model="perPage" @change="page=1">
                         <option>10</option>
                         <option>15</option>
                         <option>20</option>
@@ -17,7 +17,7 @@
                 </div>
             </div>
             <div class="column">
-                <div v-on:click="dropdown" v-bind:class="{'dropdown': true, 'is-active': isActive }">
+                <div @click="dropdown" :class="{'dropdown': true, 'is-active': isActive }">
                     <div class="dropdown-trigger">
                         <button class="button" aria-haspopup="true">
                             <span>Show/hide column</span>
@@ -40,13 +40,13 @@
                 </div>
             </div>
         </div>
-        <div :id="uuid+'hor-scroll'" style="overflow-x:auto;" v-on:scroll="horizontalScroll">
+        <div :id="uuid+'hor-scroll'" style="overflow-x:auto;" @scroll="horizontalScroll">
             <table class="table is-bordered is-fullwidth" :id="uuid+'main-table'">
                 <thead>
                 <tr>
-                    <th v-bind:id="getThId('a',key)" v-on:click="sort(key)" v-for="(value, key) in data[0]"
+                    <th :id="getThId('a',key)" @click="sort(key)" v-for="(value, key) in data[0]"
                         v-if="checkedColumn.indexOf(key) != -1" :class="{'first' : checkedColumn.indexOf(key) == 0}">
-                        {{key}} <i v-bind:class="icon"
+                        {{key}} <i :class="icon"
                                    v-if="sortBy == key"></i>
                     </th>
                 </tr>
@@ -64,8 +64,8 @@
         <table class="table is-bordered col-fixed" :id="uuid+'table-col'">
             <thead>
             <tr>
-                <th v-on:click="sort(checkedColumn[0])">{{checkedColumn[0]}} <i v-bind:class="icon"
-                                                                                v-if="sortBy == checkedColumn[0]"></i>
+                <th :id="uuid+'col-fix-th'" @click="sort(checkedColumn[0])">{{checkedColumn[0]}} <i :class="icon"
+                                                                            v-if="sortBy == checkedColumn[0]"></i>
                 </th>
             </tr>
             </thead>
@@ -75,32 +75,32 @@
             </tr>
             </tbody>
         </table>
-        <table class="table is-fullwidth header-fixed" :id="uuid+'header-fixed'" v-show="isShow">
+        <table class="table is-bordered is-fullwidth header-fixed" :id="uuid+'header-fixed'" v-show="isShow">
             <thead>
             <tr>
-                <th v-bind:id="getThId('b',key)" v-on:click="sort(key)" v-for="(value, key) in data[0]"
-                    v-if="checkedColumn.indexOf(key) != -1">{{key}} <i v-bind:class="icon"
+                <th :id="getThId('b',key)" @click="sort(key)" v-for="(value, key) in data[0]"
+                    v-if="checkedColumn.indexOf(key) != -1">{{key}} <i :class="icon"
                                                                        v-if="sortBy == key"></i>
                 </th>
             </tr>
             </thead>
         </table>
 
-        <table class="table is-bordered header-fixed" :id="uuid+'kiri-atas'" v-show="isShow">
+        <table class="table is-bordered header-fixed" v-show="isShow">
             <thead>
             <tr>
-                <th :id="uuid+'kiri-atas-col'" v-on:click="sort(checkedColumn[0])">{{checkedColumn[0]}}
-                    <i v-bind:class="icon" v-if="sortBy == checkedColumn[0]"></i>
+                <th :id="uuid+'top-left-col'" @click="sort(checkedColumn[0])">{{checkedColumn[0]}}
+                    <i :class="icon" v-if="sortBy == checkedColumn[0]"></i>
                 </th>
             </tr>
             </thead>
         </table>
 
         <nav class="pagination is-centered" role="navigation" aria-label="pagination">
-            <a class="pagination-previous" v-on:click="page -= 1">Previous</a>
-            <a class="pagination-next" v-on:click="page += 1">Next page</a>
+            <a class="pagination-previous" @click="page -= 1">Previous</a>
+            <a class="pagination-next" @click="page += 1">Next page</a>
             <ul class="pagination-list">
-                <li v-for="n in pageCount"><a v-on:click="page = n" v-bind:class="classListPage(n)">{{n}}</a></li>
+                <li v-for="n in pageCount"><a @click="page = n" :class="classListPage(n)">{{n}}</a></li>
 
             </ul>
         </nav>
@@ -235,8 +235,10 @@
                         let a = document.getElementById(this.uuid + 'cl-' + key);
                         if (a.getBoundingClientRect().x < thirdTable.getBoundingClientRect().x || a.getBoundingClientRect().x > (thirdTable.getBoundingClientRect().x + dv.getBoundingClientRect().width)) {
                             a.style.visibility = 'hidden';
+                            // a.style.border = 'none';
                         } else {
                             a.style.visibility = 'visible';
+                            // a.style.border = '1px solid #dadada';
                         }
                     }
                 }
@@ -250,7 +252,7 @@
                 } else {
                     this.isShow = false;
                 }
-                let x = document.getElementById(this.uuid + 'kiri-atas-col');
+                let x = document.getElementById(this.uuid + 'top-left-col');
                 let y = document.getElementById(this.uuid + 'col-' + this.checkedColumn[0]);
                 x.width = y.offsetWidth;
                 for (let key in this.data[0]) {
@@ -262,11 +264,23 @@
                 }
             },
             colHeight: function () {
+                let x = document.getElementById(this.uuid+'top-left-col');
+                let z = document.getElementById(this.uuid+'col-fix-th');
+                let y = document.getElementById(this.uuid + 'cl-' + this.checkedColumn[0]);
+                x.height = y.offsetHeight;
+                z.height = y.offsetHeight;
                 for (let i = 0; i < this.filtered.length; i++) {
                     let a = document.getElementById(this.uuid + 'left-' + i);
                     let b = document.getElementById(this.uuid + 'lft-' + i);
                     b.height = a.offsetHeight;
                 }
+
+            },
+            colWidth: function () {
+                console.log('asas');
+                let x = document.getElementById(this.uuid+'col-fix-th');
+                let a = document.getElementById(this.uuid + 'col-' + this.checkedColumn[0]);
+                x.width = a.offsetWidth;
             },
             colFixed: function () {
                 let mainTable = document.getElementById(this.uuid + 'main-table');
@@ -283,8 +297,9 @@
             window.addEventListener('scroll', this.colFixed);
             window.addEventListener('scroll', this.horizontalScroll);
         },
-        updated(){
+        updated() {
             this.colHeight();
+            this.colWidth();
         }
     }
 </script>
