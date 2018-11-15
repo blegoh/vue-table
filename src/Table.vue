@@ -298,6 +298,7 @@
         updated() {
             this.colHeight();
             this.colWidth();
+            this.tableHeader();
         }
     }
 </script>
