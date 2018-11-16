@@ -64,14 +64,14 @@
         <table class="table is-bordered col-fixed" :id="uuid+'table-col'">
             <thead>
             <tr>
-                <th :id="uuid+'col-fix-th'" @click="sort(checkedColumn[0])">{{checkedColumn[0]}} <i :class="icon"
-                                                                            v-if="sortBy == checkedColumn[0]"></i>
+                <th :id="uuid+'col-fix-th'" @click="sort(getFirstColumn())">{{getFirstColumn()}} <i :class="icon"
+                                                                            v-if="sortBy == getFirstColumn()"></i>
                 </th>
             </tr>
             </thead>
             <tbody>
             <tr v-for="(datum, index) in filtered">
-                <td :id="getTdId('b',index, checkedColumn[0])">{{datum[checkedColumn[0]]}}</td>
+                <td :id="getTdId('b',index, getFirstColumn())">{{datum[getFirstColumn()]}}</td>
             </tr>
             </tbody>
         </table>
@@ -89,8 +89,8 @@
         <table class="table is-bordered header-fixed" v-show="isShow">
             <thead>
             <tr>
-                <th :id="uuid+'top-left-col'" @click="sort(checkedColumn[0])">{{checkedColumn[0]}}
-                    <i :class="icon" v-if="sortBy == checkedColumn[0]"></i>
+                <th :id="uuid+'top-left-col'" @click="sort(getFirstColumn())">{{getFirstColumn()}}
+                    <i :class="icon" v-if="sortBy == getFirstColumn()"></i>
                 </th>
             </tr>
             </thead>
@@ -196,7 +196,7 @@
                 return (a == 'a') ? this.uuid + 'col-' + key : this.uuid + 'cl-' + key;
             },
             getTdId: function (a, index, key) {
-                if (key != this.checkedColumn[0])
+                if (key != this.getFirstColumn())
                     return '';
                 return (a == 'a') ? this.uuid + 'left-' + index : this.uuid + 'lft-' + index;
             },
@@ -251,7 +251,7 @@
                     this.isShow = false;
                 }
                 let x = document.getElementById(this.uuid + 'top-left-col');
-                let y = document.getElementById(this.uuid + 'col-' + this.checkedColumn[0]);
+                let y = document.getElementById(this.uuid + 'col-' + this.getFirstColumn());
                 x.width = y.offsetWidth;
                 for (let key in this.data[0]) {
                     if (this.checkedColumn.indexOf(key) != -1) {
@@ -264,7 +264,7 @@
             colHeight: function () {
                 let x = document.getElementById(this.uuid+'top-left-col');
                 let z = document.getElementById(this.uuid+'col-fix-th');
-                let y = document.getElementById(this.uuid + 'cl-' + this.checkedColumn[0]);
+                let y = document.getElementById(this.uuid + 'cl-' + this.getFirstColumn());
                 x.height = y.offsetHeight;
                 z.height = y.offsetHeight;
                 for (let i = 0; i < this.filtered.length; i++) {
@@ -277,13 +277,20 @@
             colWidth: function () {
                 console.log('asas');
                 let x = document.getElementById(this.uuid+'col-fix-th');
-                let a = document.getElementById(this.uuid + 'col-' + this.checkedColumn[0]);
+                let a = document.getElementById(this.uuid + 'col-' + this.getFirstColumn());
                 x.width = a.offsetWidth;
             },
             colFixed: function () {
                 let mainTable = document.getElementById(this.uuid + 'main-table');
                 let secondTable = document.getElementById(this.uuid + 'table-col');
                 secondTable.style.top = mainTable.getBoundingClientRect().y + 'px';
+            },
+            getFirstColumn: function () {
+                for (let key in this.data[0]) {
+                    if (this.checkedColumn.indexOf(key) != -1)
+                        return key
+                }
+                return this.checkedColumn[0];
             }
         },
         mounted() {
@@ -296,6 +303,7 @@
             window.addEventListener('scroll', this.horizontalScroll);
         },
         updated() {
+            console.log(this.checkedColumn);
             this.colHeight();
             this.colWidth();
             this.tableHeader();
