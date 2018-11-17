@@ -292,7 +292,7 @@
             colHeight: function () {
                 let x = document.getElementById(this.uuid+'top-left-col');
                 let z = document.getElementById(this.uuid+'col-fix-th');
-                let y = document.getElementById(this.uuid + 'cl-' + this.fixedColumnChange);
+                let y = document.getElementById(this.uuid + 'col-' + this.fixedColumnChange);
                 x.height = y.offsetHeight;
                 z.height = y.offsetHeight;
                 for (let i = 0; i < this.filtered.length; i++) {
