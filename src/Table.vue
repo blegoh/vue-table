@@ -30,7 +30,8 @@
                         <div class="dropdown-content">
                             <div class="dropdown-item" v-for="(value, key) in data[0]">
                                 <label class="checkbox">
-                                    <input type="checkbox" :value="key" :disabled="checkedColumn.length == 1 && checkedColumn[0] == key"
+                                    <input type="checkbox" :value="key"
+                                           :disabled="checkedColumn.length == 1 && checkedColumn[0] == key"
                                            v-model="checkedColumn">
                                     {{key}}
                                 </label>
@@ -43,7 +44,8 @@
                 <div class="select">
                     <select v-model="fixedColumnChange">
                         <option v-for="(value, key) in data[0]"
-                                v-if="checkedColumn.indexOf(key) != -1">{{key}}</option>
+                                v-if="checkedColumn.indexOf(key) != -1">{{key}}
+                        </option>
                     </select>
                 </div>
             </div>
@@ -54,10 +56,11 @@
                 <tr>
                     <th :id="getThId('a',fixedColumnChange)" @click="sort(fixedColumnChange)" class="first">
                         {{fixedColumnChange}} <i :class="icon"
-                                   v-if="sortBy == fixedColumnChange"></i>
+                                                 v-if="sortBy == fixedColumnChange"></i>
                     </th>
                     <th :id="getThId('a',key)" @click="sort(key)" v-for="(value, key) in data[0]"
-                        v-if="checkedColumn.indexOf(key) != -1 && key != fixedColumnChange" :class="{'first' : checkedColumn.indexOf(key) == 0}">
+                        v-if="checkedColumn.indexOf(key) != -1 && key != fixedColumnChange"
+                        :class="{'first' : checkedColumn.indexOf(key) == 0}">
                         {{key}} <i :class="icon"
                                    v-if="sortBy == key"></i>
                     </th>
@@ -78,7 +81,7 @@
             <thead>
             <tr>
                 <th :id="uuid+'col-fix-th'" @click="sort(fixedColumnChange)">{{fixedColumnChange}} <i :class="icon"
-                                                                                                    v-if="sortBy == fixedColumnChange"></i>
+                                                                                                      v-if="sortBy == fixedColumnChange"></i>
                 </th>
             </tr>
             </thead>
@@ -91,12 +94,13 @@
         <table class="table is-bordered is-fullwidth header-fixed" :id="uuid+'header-fixed'" v-show="isShow">
             <thead>
             <tr>
-                <th :id="getThId('b',fixedColumnChange)" @click="sort(fixedColumnChange)">{{fixedColumnChange}} <i :class="icon"
-                                                                       v-if="sortBy == fixedColumnChange"></i>
+                <th :id="getThId('b',fixedColumnChange)" @click="sort(fixedColumnChange)">{{fixedColumnChange}} <i
+                        :class="icon"
+                        v-if="sortBy == fixedColumnChange"></i>
                 </th>
                 <th :id="getThId('b',key)" @click="sort(key)" v-for="(value, key) in data[0]"
                     v-if="checkedColumn.indexOf(key) != -1 && key != fixedColumnChange">{{key}} <i :class="icon"
-                                                                       v-if="sortBy == key"></i>
+                                                                                                   v-if="sortBy == key"></i>
                 </th>
             </tr>
             </thead>
@@ -136,7 +140,7 @@
                 checkedColumn: Object.keys(this.data[0]),
                 isActive: false,
                 isShow: false,
-                fixedColumn : Object.keys(this.data[0])[0],
+                fixedColumn: Object.keys(this.data[0])[0],
                 uuid: this.guid()
             }
         },
@@ -152,6 +156,7 @@
                     this.fixedColumn = newValue;
                 }
             },
+            // filter data with search keyword
             filterSearch: function () {
                 let f = this.data.filter((p) => {
                     let x = (this.search == '');
@@ -201,6 +206,7 @@
                     return "fas fa-sort-down";
                 }
             },
+            // get page count to generate pagination
             pageCount: function () {
                 let count = Math.ceil(this.filterSearch.length / this.perPage);
                 return count;
@@ -216,10 +222,6 @@
                 return this.s4() + this.s4() + '-' + this.s4() + '-' + this.s4() + '-' +
                     this.s4() + '-' + this.s4() + this.s4() + this.s4();
             },
-            getWidth: function (key) {
-                let a = document.getElementById(this.uuid + 'col-' + key);
-                return 'width: ' + a.offsetWidth + 'px';
-            },
             getThId: function (a, key) {
                 return (a == 'a') ? this.uuid + 'col-' + key : this.uuid + 'cl-' + key;
             },
@@ -228,6 +230,7 @@
                     return '';
                 return (a == 'a') ? this.uuid + 'left-' + index : this.uuid + 'lft-' + index;
             },
+            // toggle dropdown for show/hide column
             dropdown: function () {
                 this.isActive = !this.isActive;
             },
@@ -290,8 +293,8 @@
                 }
             },
             colHeight: function () {
-                let x = document.getElementById(this.uuid+'top-left-col');
-                let z = document.getElementById(this.uuid+'col-fix-th');
+                let x = document.getElementById(this.uuid + 'top-left-col');
+                let z = document.getElementById(this.uuid + 'col-fix-th');
                 let y = document.getElementById(this.uuid + 'col-' + this.fixedColumnChange);
                 x.height = y.offsetHeight;
                 z.height = y.offsetHeight;
@@ -303,7 +306,7 @@
 
             },
             colWidth: function () {
-                let x = document.getElementById(this.uuid+'col-fix-th');
+                let x = document.getElementById(this.uuid + 'col-fix-th');
                 let a = document.getElementById(this.uuid + 'col-' + this.fixedColumnChange);
                 x.width = a.offsetWidth;
             },
@@ -362,9 +365,14 @@
         background-color: white;
     }
 
-    .hide{
+    .col-fixed td {
+        word-wrap: break-word;
+        max-width: 100px;
+    }
+
+    .hide {
         visibility: hidden;
-        border: none!important;
+        border: none !important;
     }
 
 
