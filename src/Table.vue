@@ -55,13 +55,13 @@
                 <thead>
                 <tr>
                     <th :id="getThId('a',fixedColumnChange)" @click="sort(fixedColumnChange)" class="first">
-                        {{fixedColumnChange}} <i :class="icon"
+                        {{headers[fixedColumnChange]}} <i :class="icon"
                                                  v-if="sortBy == fixedColumnChange"></i>
                     </th>
                     <th :id="getThId('a',key)" @click="sort(key)" v-for="(value, key) in data[0]"
                         v-if="checkedColumn.indexOf(key) != -1 && key != fixedColumnChange"
                         :class="{'first' : checkedColumn.indexOf(key) == 0}">
-                        {{key}} <i :class="icon"
+                        {{headers[key]}} <i :class="icon"
                                    v-if="sortBy == key"></i>
                     </th>
                 </tr>
@@ -80,7 +80,7 @@
         <table class="table is-bordered col-fixed" :id="uuid+'table-col'">
             <thead>
             <tr>
-                <th :id="uuid+'col-fix-th'" @click="sort(fixedColumnChange)">{{fixedColumnChange}} <i :class="icon"
+                <th :id="uuid+'col-fix-th'" @click="sort(fixedColumnChange)">{{headers[fixedColumnChange]}} <i :class="icon"
                                                                                                       v-if="sortBy == fixedColumnChange"></i>
                 </th>
             </tr>
@@ -94,12 +94,12 @@
         <table class="table is-bordered is-fullwidth header-fixed" :id="uuid+'header-fixed'" v-show="isShow">
             <thead>
             <tr>
-                <th :id="getThId('b',fixedColumnChange)" @click="sort(fixedColumnChange)">{{fixedColumnChange}} <i
+                <th :id="getThId('b',fixedColumnChange)" @click="sort(fixedColumnChange)">{{headers[fixedColumnChange]}} <i
                         :class="icon"
                         v-if="sortBy == fixedColumnChange"></i>
                 </th>
                 <th :id="getThId('b',key)" @click="sort(key)" v-for="(value, key) in data[0]"
-                    v-if="checkedColumn.indexOf(key) != -1 && key != fixedColumnChange">{{key}} <i :class="icon"
+                    v-if="checkedColumn.indexOf(key) != -1 && key != fixedColumnChange">{{headers[key]}} <i :class="icon"
                                                                                                    v-if="sortBy == key"></i>
                 </th>
             </tr>
@@ -109,7 +109,7 @@
         <table class="table is-bordered header-fixed" v-show="isShow">
             <thead>
             <tr>
-                <th :id="uuid+'top-left-col'" @click="sort(fixedColumnChange)">{{fixedColumnChange}}
+                <th :id="uuid+'top-left-col'" @click="sort(fixedColumnChange)">{{headers[fixedColumnChange]}}
                     <i :class="icon" v-if="sortBy == fixedColumnChange"></i>
                 </th>
             </tr>
@@ -129,7 +129,7 @@
 <script>
     export default {
         name: "Table",
-        props: ['data'],
+        props: ['data','headers'],
         data: function () {
             return {
                 search: '',

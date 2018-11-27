@@ -8,6 +8,22 @@ var app = new Vue({
     el: '#app',
     data: {
         message: 'Hello Vue!',
+        headers:{
+            "id": "ID",
+            "first_name": "First Name",
+            "last_name": "Last Name",
+            "gender": "Gender",
+            "age": "Age",
+            "eyeColor": "Eye Color",
+            "email": "Email",
+            "balance": "Balance",
+            "phone": "Phone",
+            "address": "Address",
+            "company": "Company",
+            "latitude": "Latitude",
+            "longitude": "Longitude",
+            "registered": "Registered",
+        },
         users: [
             {
                 "id": 0,
