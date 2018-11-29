@@ -54,18 +54,20 @@
             <table class="table is-bordered is-fullwidth" :id="uuid+'main-table'">
                 <thead>
                 <tr v-if="!!customHeaders" v-for="(head,index) in customHeaders">
-                    <th :id="uuid+'-maintable-custom-header-'+index+'-'+i" v-for="(field,i) in head.fields" :colspan="field.colSpan">{{field.caption}}</th>
+                    <th :id="uuid+'-maintable-custom-header-'+index+'-'+i" v-for="(field,i) in head.fields"
+                        :colspan="field.colSpan">{{field.caption}}
+                    </th>
                 </tr>
                 <tr>
                     <th :id="getThId('a',fixedColumnChange)" @click="sort(fixedColumnChange)" class="first">
                         {{headers[fixedColumnChange]}} <i :class="icon"
-                                                 v-if="sortBy == fixedColumnChange"></i>
+                                                          v-if="sortBy == fixedColumnChange"></i>
                     </th>
                     <th :id="getThId('a',key)" @click="sort(key)" v-for="(value, key) in data[0]"
                         v-if="checkedColumn.indexOf(key) != -1 && key != fixedColumnChange"
                         :class="{'first' : checkedColumn.indexOf(key) == 0}">
                         {{headers[key]}} <i :class="icon"
-                                   v-if="sortBy == key"></i>
+                                            v-if="sortBy == key"></i>
                     </th>
                 </tr>
                 </thead>
@@ -86,8 +88,9 @@
                 <th :id="uuid+'-col-table-custom-header-'+index">{{head.fields[0].caption}}</th>
             </tr>
             <tr>
-                <th :id="uuid+'col-fix-th'" @click="sort(fixedColumnChange)">{{headers[fixedColumnChange]}} <i :class="icon"
-                                                                                                      v-if="sortBy == fixedColumnChange"></i>
+                <th :id="uuid+'col-fix-th'" @click="sort(fixedColumnChange)">{{headers[fixedColumnChange]}} <i
+                        :class="icon"
+                        v-if="sortBy == fixedColumnChange"></i>
                 </th>
             </tr>
             </thead>
@@ -99,17 +102,21 @@
         </table>
         <table class="table is-bordered is-fullwidth header-fixed" :id="uuid+'header-fixed'" v-show="isShow">
             <thead>
-            <tr v-if="!!customHeaders" v-for="head in customHeaders">
-                <th v-for="field in head.fields" :colspan="field.colSpan">{{field.caption}}</th>
+            <tr v-if="!!customHeaders" v-for="(head,index) in customHeaders">
+                <th :id="uuid+'-header-table-custom-header-'+index+'-'+i" v-for="(field,i) in head.fields"
+                    :colspan="field.colSpan">{{field.caption}}
+                </th>
             </tr>
             <tr>
-                <th :id="getThId('b',fixedColumnChange)" @click="sort(fixedColumnChange)">{{headers[fixedColumnChange]}} <i
-                        :class="icon"
-                        v-if="sortBy == fixedColumnChange"></i>
+                <th :id="getThId('b',fixedColumnChange)" @click="sort(fixedColumnChange)">{{headers[fixedColumnChange]}}
+                    <i
+                            :class="icon"
+                            v-if="sortBy == fixedColumnChange"></i>
                 </th>
                 <th :id="getThId('b',key)" @click="sort(key)" v-for="(value, key) in data[0]"
-                    v-if="checkedColumn.indexOf(key) != -1 && key != fixedColumnChange">{{headers[key]}} <i :class="icon"
-                                                                                                   v-if="sortBy == key"></i>
+                    v-if="checkedColumn.indexOf(key) != -1 && key != fixedColumnChange">{{headers[key]}} <i
+                        :class="icon"
+                        v-if="sortBy == key"></i>
                 </th>
             </tr>
             </thead>
@@ -141,7 +148,7 @@
 <script>
     export default {
         name: "Table",
-        props: ['data','headers','customHeaders'],
+        props: ['data', 'headers', 'customHeaders'],
         data: function () {
             return {
                 search: '',
@@ -283,6 +290,18 @@
                         }
                     }
                 }
+                if (!!this.customHeaders) {
+                    for (let index = 0; index < this.customHeaders.length; index++) {
+                        for (let i = 0; i < this.customHeaders[index].fields.length; i++) {
+                            let a = document.getElementById(this.uuid + '-header-table-custom-header-' + index + '-' + i);
+                            if (a.getBoundingClientRect().x < thirdTable.getBoundingClientRect().x || a.getBoundingClientRect().x > (thirdTable.getBoundingClientRect().x + dv.getBoundingClientRect().width)) {
+                                a.classList.add('hide');
+                            } else {
+                                a.classList.remove('hide');
+                            }
+                        }
+                    }
+                }
             },
             tableHeader: function () {
                 let mainTable = document.getElementById(this.uuid + 'main-table');
@@ -315,9 +334,9 @@
                     let b = document.getElementById(this.uuid + 'lft-' + i);
                     b.height = a.offsetHeight;
                 }
-                if (!!this.customHeaders){
+                if (!!this.customHeaders) {
                     for (let i = 0; i < this.customHeaders.length; i++) {
-                        let c = document.getElementById(this.uuid + '-maintable-custom-header-' + i+'-0');
+                        let c = document.getElementById(this.uuid + '-maintable-custom-header-' + i + '-0');
                         let d = document.getElementById(this.uuid + '-col-table-custom-header-' + i);
                         let e = document.getElementById(this.uuid + '-first-left-table-custom-header-' + i);
                         d.height = c.offsetHeight;
@@ -348,12 +367,14 @@
             this.colHeight();
             this.colWidth();
             this.colFixed();
-        },
+        }
+        ,
         created() {
             window.addEventListener('scroll', this.tableHeader);
             window.addEventListener('scroll', this.colFixed);
             window.addEventListener('scroll', this.horizontalScroll);
-        },
+        }
+        ,
         updated() {
             this.colHeight();
             this.colWidth();
