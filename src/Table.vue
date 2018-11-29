@@ -16,7 +16,7 @@
                     </select>
                 </div>
             </div>
-            <div class="column">
+            <div class="column" v-if="!customHeaders">
                 <div @click="dropdown" :class="{'dropdown': true, 'is-active': isActive }">
                     <div class="dropdown-trigger">
                         <button class="button" aria-haspopup="true">
@@ -40,7 +40,7 @@
                     </div>
                 </div>
             </div>
-            <div class="column">
+            <div class="column" v-if="!customHeaders">
                 <div class="select">
                     <select v-model="fixedColumnChange">
                         <option v-for="(value, key) in data[0]"
@@ -53,6 +53,9 @@
         <div :id="uuid+'hor-scroll'" style="overflow-x:auto;" @scroll="horizontalScroll">
             <table class="table is-bordered is-fullwidth" :id="uuid+'main-table'">
                 <thead>
+                <tr v-if="!!customHeaders" v-for="(head,index) in customHeaders">
+                    <th :id="uuid+'-maintable-custom-header-'+index+'-'+i" v-for="(field,i) in head.fields" :colspan="field.colSpan">{{field.caption}}</th>
+                </tr>
                 <tr>
                     <th :id="getThId('a',fixedColumnChange)" @click="sort(fixedColumnChange)" class="first">
                         {{headers[fixedColumnChange]}} <i :class="icon"
@@ -79,6 +82,9 @@
 
         <table class="table is-bordered col-fixed" :id="uuid+'table-col'">
             <thead>
+            <tr v-if="!!customHeaders" v-for="(head,index) in customHeaders">
+                <th :id="uuid+'-col-table-custom-header-'+index">{{head.fields[0].caption}}</th>
+            </tr>
             <tr>
                 <th :id="uuid+'col-fix-th'" @click="sort(fixedColumnChange)">{{headers[fixedColumnChange]}} <i :class="icon"
                                                                                                       v-if="sortBy == fixedColumnChange"></i>
@@ -93,6 +99,9 @@
         </table>
         <table class="table is-bordered is-fullwidth header-fixed" :id="uuid+'header-fixed'" v-show="isShow">
             <thead>
+            <tr v-if="!!customHeaders" v-for="head in customHeaders">
+                <th v-for="field in head.fields" :colspan="field.colSpan">{{field.caption}}</th>
+            </tr>
             <tr>
                 <th :id="getThId('b',fixedColumnChange)" @click="sort(fixedColumnChange)">{{headers[fixedColumnChange]}} <i
                         :class="icon"
@@ -108,6 +117,9 @@
 
         <table class="table is-bordered header-fixed" v-show="isShow">
             <thead>
+            <tr v-if="!!customHeaders" v-for="(head,index) in customHeaders">
+                <th :id="uuid+'-first-left-table-custom-header-'+index">{{head.fields[0].caption}}</th>
+            </tr>
             <tr>
                 <th :id="uuid+'top-left-col'" @click="sort(fixedColumnChange)">{{headers[fixedColumnChange]}}
                     <i :class="icon" v-if="sortBy == fixedColumnChange"></i>
@@ -129,7 +141,7 @@
 <script>
     export default {
         name: "Table",
-        props: ['data','headers'],
+        props: ['data','headers','customHeaders'],
         data: function () {
             return {
                 search: '',
@@ -303,7 +315,15 @@
                     let b = document.getElementById(this.uuid + 'lft-' + i);
                     b.height = a.offsetHeight;
                 }
-
+                if (!!this.customHeaders){
+                    for (let i = 0; i < this.customHeaders.length; i++) {
+                        let c = document.getElementById(this.uuid + '-maintable-custom-header-' + i+'-0');
+                        let d = document.getElementById(this.uuid + '-col-table-custom-header-' + i);
+                        let e = document.getElementById(this.uuid + '-first-left-table-custom-header-' + i);
+                        d.height = c.offsetHeight;
+                        e.height = c.offsetHeight;
+                    }
+                }
             },
             colWidth: function () {
                 let x = document.getElementById(this.uuid + 'col-fix-th');
@@ -318,13 +338,15 @@
             getFirstColumn: function () {
                 for (let key in this.data[0]) {
                     if (this.checkedColumn.indexOf(key) != -1)
-                        return key
+                        return key;
                 }
                 return this.checkedColumn[0];
             }
         },
         mounted() {
+            console.log(this.customHeaders);
             this.colHeight();
+            this.colWidth();
             this.colFixed();
         },
         created() {
