@@ -16,7 +16,7 @@
                     </select>
                 </div>
             </div>
-            <div class="column" v-if="!customHeaders">
+            <div class="column" v-if="!isCustomHeaders">
                 <div @click="dropdown" :class="{'dropdown': true, 'is-active': isActive }">
                     <div class="dropdown-trigger">
                         <button class="button" aria-haspopup="true">
@@ -28,23 +28,23 @@
                     </div>
                     <div class="dropdown-menu" role="menu">
                         <div class="dropdown-content">
-                            <div class="dropdown-item" v-for="(value, key) in data[0]">
+                            <div class="dropdown-item" v-for="(value, key) in dataTable[0]">
                                 <label class="checkbox">
                                     <input type="checkbox" :value="key"
-                                           :disabled="checkedColumn.length == 1 && checkedColumn[0] == key"
-                                           v-model="checkedColumn">
-                                    {{key}}
+                                           :disabled="checkedColumnComputed.length == 1 && checkedColumnComputed[0] == key"
+                                           v-model="checkedColumnComputed">
+                                    {{dataHeaders[key]}}
                                 </label>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="column" v-if="!customHeaders">
+            <div class="column" v-if="!isCustomHeaders">
                 <div class="select">
                     <select v-model="fixedColumnChange">
-                        <option v-for="(value, key) in data[0]"
-                                v-if="checkedColumn.indexOf(key) != -1">{{key}}
+                        <option v-for="(value, key) in dataTable[0]"
+                                v-if="checkedColumnComputed.indexOf(key) != -1" :value="key">{{dataHeaders[key]}}
                         </option>
                     </select>
                 </div>
@@ -53,20 +53,20 @@
         <div :id="uuid+'hor-scroll'" style="overflow-x:auto;" @scroll="horizontalScroll">
             <table class="table is-bordered is-fullwidth" :id="uuid+'main-table'">
                 <thead>
-                <tr v-if="!!customHeaders" v-for="(head,index) in customHeaders">
+                <tr v-if="isCustomHeaders" v-for="(head,index) in dataCustomHeaders">
                     <th :id="uuid+'-maintable-custom-header-'+index+'-'+i" v-for="(field,i) in head.fields"
                         :colspan="field.colSpan">{{field.caption}}
                     </th>
                 </tr>
                 <tr>
                     <th :id="getThId('a',fixedColumnChange)" @click="sort(fixedColumnChange)" class="first">
-                        {{headers[fixedColumnChange]}} <i :class="icon"
+                        {{dataHeaders[fixedColumnChange]}} <i :class="icon"
                                                           v-if="sortBy == fixedColumnChange"></i>
                     </th>
-                    <th :id="getThId('a',key)" @click="sort(key)" v-for="(value, key) in data[0]"
-                        v-if="checkedColumn.indexOf(key) != -1 && key != fixedColumnChange"
-                        :class="{'first' : checkedColumn.indexOf(key) == 0}">
-                        {{headers[key]}} <i :class="icon"
+                    <th :id="getThId('a',key)" @click="sort(key)" v-for="(value, key) in dataTable[0]"
+                        v-if="checkedColumnComputed.indexOf(key) != -1 && key != fixedColumnChange"
+                        :class="{'first' : checkedColumnComputed.indexOf(key) == 0}">
+                        {{dataHeaders[key]}} <i :class="icon"
                                             v-if="sortBy == key"></i>
                     </th>
                 </tr>
@@ -75,7 +75,7 @@
                 <tr v-for="(datum,index) in filtered">
                     <td :id="getTdId('a',index, fixedColumnChange)">{{datum[fixedColumnChange]}}</td>
                     <td :id="getTdId('a',index, key)" v-for="(value, key) in datum"
-                        v-if="checkedColumn.indexOf(key) != -1 && key != fixedColumnChange">{{value}}
+                        v-if="checkedColumnComputed.indexOf(key) != -1 && key != fixedColumnChange">{{value}}
                     </td>
                 </tr>
                 </tbody>
@@ -84,11 +84,11 @@
 
         <table class="table is-bordered col-fixed" :id="uuid+'table-col'">
             <thead>
-            <tr v-if="!!customHeaders" v-for="(head,index) in customHeaders">
+            <tr v-if="isCustomHeaders" v-for="(head,index) in dataCustomHeaders">
                 <th :id="uuid+'-col-table-custom-header-'+index">{{head.fields[0].caption}}</th>
             </tr>
             <tr>
-                <th :id="uuid+'col-fix-th'" @click="sort(fixedColumnChange)">{{headers[fixedColumnChange]}} <i
+                <th :id="uuid+'col-fix-th'" @click="sort(fixedColumnChange)">{{dataHeaders[fixedColumnChange]}} <i
                         :class="icon"
                         v-if="sortBy == fixedColumnChange"></i>
                 </th>
@@ -102,19 +102,19 @@
         </table>
         <table class="table is-bordered is-fullwidth header-fixed" :id="uuid+'header-fixed'" v-show="isShow">
             <thead>
-            <tr v-if="!!customHeaders" v-for="(head,index) in customHeaders">
+            <tr v-if="isCustomHeaders" v-for="(head,index) in dataCustomHeaders">
                 <th :id="uuid+'-header-table-custom-header-'+index+'-'+i" v-for="(field,i) in head.fields"
                     :colspan="field.colSpan">{{field.caption}}
                 </th>
             </tr>
             <tr>
-                <th :id="getThId('b',fixedColumnChange)" @click="sort(fixedColumnChange)">{{headers[fixedColumnChange]}}
+                <th :id="getThId('b',fixedColumnChange)" @click="sort(fixedColumnChange)">{{dataHeaders[fixedColumnChange]}}
                     <i
                             :class="icon"
                             v-if="sortBy == fixedColumnChange"></i>
                 </th>
-                <th :id="getThId('b',key)" @click="sort(key)" v-for="(value, key) in data[0]"
-                    v-if="checkedColumn.indexOf(key) != -1 && key != fixedColumnChange">{{headers[key]}} <i
+                <th :id="getThId('b',key)" @click="sort(key)" v-for="(value, key) in dataTable[0]"
+                    v-if="checkedColumnComputed.indexOf(key) != -1 && key != fixedColumnChange">{{dataHeaders[key]}} <i
                         :class="icon"
                         v-if="sortBy == key"></i>
                 </th>
@@ -124,11 +124,11 @@
 
         <table class="table is-bordered header-fixed" v-show="isShow">
             <thead>
-            <tr v-if="!!customHeaders" v-for="(head,index) in customHeaders">
+            <tr v-if="isCustomHeaders" v-for="(head,index) in dataCustomHeaders">
                 <th :id="uuid+'-first-left-table-custom-header-'+index">{{head.fields[0].caption}}</th>
             </tr>
             <tr>
-                <th :id="uuid+'top-left-col'" @click="sort(fixedColumnChange)">{{headers[fixedColumnChange]}}
+                <th :id="uuid+'top-left-col'" @click="sort(fixedColumnChange)">{{dataHeaders[fixedColumnChange]}}
                     <i :class="icon" v-if="sortBy == fixedColumnChange"></i>
                 </th>
             </tr>
@@ -156,17 +156,115 @@
                 sortMethod: 'asc',
                 perPage: 10,
                 page: 1,
-                checkedColumn: Object.keys(this.data[0]),
+                checkedColumn: null,
                 isActive: false,
                 isShow: false,
-                fixedColumn: Object.keys(this.data[0])[0],
+                fixedColumn: null,
                 uuid: this.guid()
             }
         },
         computed: {
+            checkedColumnComputed: {
+                get: function () {
+                    if (!this.checkedColumn) {
+                        this.checkedColumn = Object.keys(this.dataTable[0]);
+                    }
+                    return this.checkedColumn;
+                },
+                set: function (newValue) {
+                    this.checkedColumn = newValue;
+                }
+            },
+            isCustomHeaders: function () {
+                return !!this.customHeaders || this.hasHeadSlot;
+            },
+            hasHeadSlot() {
+                return !!this.$slots['p-head']
+            },
+            hasFilterSlot() {
+                return !!this.$slots['p-filter']
+            },
+            hasbodySlot() {
+                return !!this.$slots['p-body']
+            },
+            dataTable: function(){
+                if (!!this.data) {
+                    return this.data;
+                } else if (this.hasbodySlot) {
+                    let data = [];
+                    let idx = 0;
+                    for (let i = 0; i < this.$slots['p-body'].length; i++) {
+                        if (!!this.$slots['p-body'][i].tag) {
+                            let datum = [];
+                            let index = 0;
+                            for (let k = 0; k < this.$slots['p-body'][i].children.length; k++) {
+                                if (!!this.$slots['p-body'][i].children[k].tag) {
+                                    datum[index++] = this.$slots['p-body'][i].children[k].children[0].text;
+                                }
+                            }
+                            datum = Object.assign({}, datum);
+                            data[idx++] = datum;
+                        }
+                    }
+                    return data;
+                }else {
+                    return null;
+                }
+            },
+            dataHeaders: function(){
+                if (!!this.headers) {
+                    return this.headers
+                } else if (this.hasFilterSlot) {
+                    let headers = [];
+                    let idx = 0;
+                    for (let i = 0; i < this.$slots['p-filter'].length; i++) {
+                        if (!!this.$slots['p-filter'][i].tag) {
+                            for (let k = 0; k < this.$slots['p-filter'][i].children.length; k++) {
+                                if (!!this.$slots['p-filter'][i].children[k].tag) {
+                                    headers[idx++] = this.$slots['p-filter'][i].children[k].children[0].text;
+                                }
+                            }
+                        }
+                    }
+                    headers = Object.assign({}, headers);
+                    return headers;
+                }else {
+                    return Object.keys(this.dataTable[0]);
+                }
+            },
+            dataCustomHeaders: function () {
+                if (!!this.customHeaders) {
+                    return this.customHeaders
+                } else if (this.hasHeadSlot) {
+                    let customHeaders = [];
+                    let idx = 0;
+                    for (let i = 0; i < this.$slots['p-head'].length; i++) {
+                        if (!!this.$slots['p-head'][i].tag) {
+                            let fields = [];
+                            let index = 0;
+                            for (let k = 0; k < this.$slots['p-head'][i].children.length; k++) {
+                                if (!!this.$slots['p-head'][i].children[k].tag) {
+                                    fields[index++] = {
+                                        caption: (!!this.$slots['p-head'][i].children[k].children)?this.$slots['p-head'][i].children[k].children[0].text:"",
+                                        colSpan: (!!this.$slots['p-head'][i].children[k].data.attrs.colspan)?this.$slots['p-head'][i].children[k].data.attrs.colspan:1,
+                                        rowSpan: (!!this.$slots['p-head'][i].children[k].data.attrs.rowspan)?this.$slots['p-head'][i].children[k].data.attrs.rowspan:1
+                                    };
+                                }
+                            }
+                            customHeaders[idx++] = {
+                                fields : fields
+                            }
+                        }
+                    }
+                    return customHeaders;
+                }
+            },
             fixedColumnChange: {
                 get: function () {
-                    if (this.checkedColumn.indexOf(this.fixedColumn) < 0) {
+                    if (!this.fixedColumn) {
+                        this.fixedColumn = Object.keys(this.dataTable[0])[0];
+                    }
+                    if (this.checkedColumnComputed.indexOf(this.fixedColumn) < 0) {
                         this.fixedColumn = this.getFirstColumn();
                     }
                     return this.fixedColumn;
@@ -177,7 +275,7 @@
             },
             // filter data with search keyword
             filterSearch: function () {
-                let f = this.data.filter((p) => {
+                let f = this.dataTable.filter((p) => {
                     let x = (this.search == '');
                     for (let key in p) {
                         let value = p[key] + '';
@@ -268,7 +366,7 @@
                 if (p == 'prev' && this.page == 1) {
                     return 'page-item disabled'
                 }
-                if (p == 'next' && this.page == Math.ceil(this.data.length / this.perPage)) {
+                if (p == 'next' && this.page == Math.ceil(this.dataTable.length / this.perPage)) {
                     return 'page-item disabled'
                 }
                 return 'page-item'
@@ -280,8 +378,8 @@
                 let thirdTable = document.getElementById(this.uuid + 'table-col');
                 let dv = document.getElementById(this.uuid + 'hor-scroll');
                 secondTable.style.left = mainTable.getBoundingClientRect().x + 'px';
-                for (let key in this.data[0]) {
-                    if (this.checkedColumn.indexOf(key) != -1) {
+                for (let key in this.dataTable[0]) {
+                    if (this.checkedColumnComputed.indexOf(key) != -1) {
                         let a = document.getElementById(this.uuid + 'cl-' + key);
                         if (a.getBoundingClientRect().x < thirdTable.getBoundingClientRect().x || a.getBoundingClientRect().x > (thirdTable.getBoundingClientRect().x + dv.getBoundingClientRect().width)) {
                             a.classList.add('hide');
@@ -290,9 +388,9 @@
                         }
                     }
                 }
-                if (!!this.customHeaders) {
-                    for (let index = 0; index < this.customHeaders.length; index++) {
-                        for (let i = 0; i < this.customHeaders[index].fields.length; i++) {
+                if (this.isCustomHeaders) {
+                    for (let index = 0; index < this.dataCustomHeaders.length; index++) {
+                        for (let i = 0; i < this.dataCustomHeaders[index].fields.length; i++) {
                             let a = document.getElementById(this.uuid + '-header-table-custom-header-' + index + '-' + i);
                             if (a.getBoundingClientRect().x < thirdTable.getBoundingClientRect().x || a.getBoundingClientRect().x > (thirdTable.getBoundingClientRect().x + dv.getBoundingClientRect().width)) {
                                 a.classList.add('hide');
@@ -315,8 +413,8 @@
                 let x = document.getElementById(this.uuid + 'top-left-col');
                 let y = document.getElementById(this.uuid + 'col-' + this.fixedColumnChange);
                 x.width = y.offsetWidth;
-                for (let key in this.data[0]) {
-                    if (this.checkedColumn.indexOf(key) != -1) {
+                for (let key in this.dataTable[0]) {
+                    if (this.checkedColumnComputed.indexOf(key) != -1) {
                         let a = document.getElementById(this.uuid + 'cl-' + key);
                         let b = document.getElementById(this.uuid + 'col-' + key);
                         a.width = b.offsetWidth;
@@ -334,8 +432,8 @@
                     let b = document.getElementById(this.uuid + 'lft-' + i);
                     b.height = a.offsetHeight;
                 }
-                if (!!this.customHeaders) {
-                    for (let i = 0; i < this.customHeaders.length; i++) {
+                if (this.isCustomHeaders) {
+                    for (let i = 0; i < this.dataCustomHeaders.length; i++) {
                         let c = document.getElementById(this.uuid + '-maintable-custom-header-' + i + '-0');
                         let d = document.getElementById(this.uuid + '-col-table-custom-header-' + i);
                         let e = document.getElementById(this.uuid + '-first-left-table-custom-header-' + i);
@@ -355,15 +453,15 @@
                 secondTable.style.top = mainTable.getBoundingClientRect().y + 'px';
             },
             getFirstColumn: function () {
-                for (let key in this.data[0]) {
-                    if (this.checkedColumn.indexOf(key) != -1)
+                for (let key in this.dataTable[0]) {
+                    if (this.checkedColumnComputed.indexOf(key) != -1)
                         return key;
                 }
-                return this.checkedColumn[0];
+                return this.checkedColumnComputed[0];
             }
         },
         mounted() {
-            console.log(this.customHeaders);
+            // console.log(this.customHeaders);
             this.colHeight();
             this.colWidth();
             this.colFixed();
