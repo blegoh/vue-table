@@ -136,8 +136,8 @@
         </table>
 
         <nav class="pagination is-centered" role="navigation" aria-label="pagination">
-            <a class="pagination-previous" @click="page -= 1">Previous</a>
-            <a class="pagination-next" @click="page += 1">Next page</a>
+            <a class="pagination-previous" @click="(page > 1)?page -= 1:page=page" :disabled="page == 1">Previous</a>
+            <a class="pagination-next" @click="(page < pageCount)?page += 1:page=page" :disabled="page == pageCount">Next</a>
             <ul class="pagination-list">
                 <li v-for="n in pageCount"><a @click="page = n" :class="classListPage(n)">{{n}}</a></li>
 
