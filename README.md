@@ -25,6 +25,13 @@ Include the script file, then install the component with `Vue.use(VueClock);` e.
 
 ```js
 import VueTable from 'vue-table-blegoh';
+
+new Vue({
+  components: {
+    VueTable
+  }
+});
+
 ```
 
 ## Usage
