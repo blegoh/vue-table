@@ -100,3 +100,66 @@ var app = new Vue({
   }
 })
 ```
+### Using slot
+
+```html
+<div id="app">
+    <vue-table>
+    <template slot="p-head">
+        <tr>
+            <th colspan="2"></th>
+            <th colspan="6">19 Nov</th>
+        </tr>
+        <tr>
+            <th colspan="2"></th>
+            <th colspan="3">Target</th>
+            <th colspan="3">Actual</th>
+        </tr>
+    </template>
+    <template slot="p-filter">
+        <tr>
+            <th>No</th>
+            <th>Name</th>
+            <th>Call</th>
+            <th>Ec</th>
+            <th>Value</th>
+            <th>Call</th>
+            <th>Ec</th>
+            <th>Value</th>
+        </tr>
+    </template>
+    <template slot="p-body">
+        <tr>
+            <td>1</td>
+            <td>Adhi Tomara</td>
+            <td>5</td>
+            <td>3</td>
+            <td>750000</td>
+            <td>0</td>
+            <td>0</td>
+            <td>0</td>
+        </tr>
+        <tr>
+            <td>1</td>
+            <td>Adhi Tomara</td>
+            <td>5</td>
+            <td>3</td>
+            <td>750000</td>
+            <td>0</td>
+            <td>0</td>
+            <td>0</td>
+        </tr>
+        <tr>
+            <td>1</td>
+            <td>Adhi Tomara</td>
+            <td>5</td>
+            <td>3</td>
+            <td>750000</td>
+            <td>0</td>
+            <td>0</td>
+            <td>0</td>
+        </tr>
+    </template>
+    </vue-table>
+</div>
+```
