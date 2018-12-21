@@ -11,7 +11,7 @@ npm i vue-table-blegoh
 
 ### Browser
 
-Include the script file, then install the component with `Vue.use(VueClock);` e.g.:
+Include the script file, then install the component with `Vue.use(VueTable);` e.g.:
 
 ```html
 <script type="text/javascript" src="node_modules/vue/dist/vue.min.js"></script>
