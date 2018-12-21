@@ -36,8 +36,67 @@ new Vue({
 
 ## Usage
 
-Once installed, it can be used in a template as simply as:
+### Using props
 
 ```html
-<vue-table></vue-table>
+<div id="app">
+    <vue-table v-bind:data="users"></vue-table>
+</div>
+```
+```js
+var app = new Vue({
+  el: '#app',
+  data: {
+    users: [
+        {
+            "id": 0,
+            "first_name": "Lorraine",
+            "last_name": "Fields",
+            "gender": "female",
+            "age": 20,
+            "eyeColor": "green",
+            "email": "lorrainefields@grok.com",
+            "balance": "$1,189.15",
+            "phone": "+1 (901) 442-3257",
+            "address": "617 Quentin Street, Vivian, Alabama, 4745",
+            "company": "HOPELI",
+            "latitude": -45.537617,
+            "longitude": 54.224457,
+            "registered": "2017-12-14T08:02:56 -07:00"
+        },
+        {
+            "id": 1,
+            "first_name": "Stanton",
+            "last_name": "Hebert",
+            "gender": "male",
+            "age": 28,
+            "eyeColor": "green",
+            "email": "stantonhebert@hopeli.com",
+            "balance": "$3,288.77",
+            "phone": "+1 (841) 405-3690",
+            "address": "563 Melba Court, Ernstville, Arizona, 4331",
+            "company": "BRISTO",
+            "latitude": 70.585429,
+            "longitude": 94.545702,
+            "registered": "2016-03-26T02:35:10 -07:00"
+        },
+        {
+            "id": 2,
+            "first_name": "Karyn",
+            "last_name": "Barr",
+            "gender": "female",
+            "age": 33,
+            "eyeColor": "brown",
+            "email": "karynbarr@bristo.com",
+            "balance": "$1,694.01",
+            "phone": "+1 (885) 438-3758",
+            "address": "981 Portal Street, Cotopaxi, Indiana, 5943",
+            "company": "OCEANICA",
+            "latitude": 18.869135,
+            "longitude": -77.283556,
+            "registered": "2014-10-10T10:53:15 -07:00"
+        }
+    ]
+  }
+})
 ```
