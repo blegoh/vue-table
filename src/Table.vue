@@ -229,7 +229,13 @@
                     headers = Object.assign({}, headers);
                     return headers;
                 }else {
-                    return Object.keys(this.dataTable[0]);
+                    let a = Object.keys(this.dataTable[0]);
+                    let headers = [];
+                    for (let i= 0; i < a.length;i++){
+                        headers[a[i]] = a[i];
+                    }
+                    headers = Object.assign({}, headers);
+                    return headers;
                 }
             },
             dataCustomHeaders: function () {
