@@ -477,6 +477,11 @@
             window.addEventListener('scroll', this.tableHeader);
             window.addEventListener('scroll', this.colFixed);
             window.addEventListener('scroll', this.horizontalScroll);
+            window.addEventListener("resize", this.tableHeader);
+            window.addEventListener('resize', this.horizontalScroll);
+            window.addEventListener('resize', this.colFixed);
+            window.addEventListener('resize', this.colHeight);
+            window.addEventListener('resize', this.colWidth);
         }
         ,
         updated() {
