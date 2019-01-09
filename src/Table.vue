@@ -52,7 +52,7 @@
         </div>
         <div :id="uuid+'hor-scroll'" style="overflow-x:auto;" @scroll="horizontalScroll">
             <table class="table is-bordered is-fullwidth" :id="uuid+'main-table'">
-                <thead>
+                <thead :id="'thead'+uuid">
                 <tr v-if="isCustomHeaders" v-for="(head,index) in dataCustomHeaders">
                     <th :id="uuid+'-maintable-custom-header-'+index+'-'+i" v-for="(field,i) in head.fields"
                         :colspan="field.colSpan">{{field.caption}}
@@ -410,8 +410,9 @@
             tableHeader: function () {
                 let mainTable = document.getElementById(this.uuid + 'main-table');
                 let secondTable = document.getElementById(this.uuid + 'header-fixed');
+                let thead = document.getElementById('thead'+this.uuid);
                 secondTable.style.width = mainTable.offsetWidth + 'px';
-                if (mainTable.getBoundingClientRect().y <= 0 && mainTable.getBoundingClientRect().y >= (-1 * mainTable.offsetHeight)) {
+                if (mainTable.getBoundingClientRect().y <= 0 && mainTable.getBoundingClientRect().y >= (-1 * mainTable.offsetHeight)+ thead.offsetHeight) {
                     this.isShow = true;
                 } else {
                     this.isShow = false;
